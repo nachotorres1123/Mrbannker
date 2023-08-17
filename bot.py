@@ -137,7 +137,7 @@ async def binio(message: types.Message):
     if len(BIN) < 6:
         return await message.reply('Send a valid BIN.')
 
-    r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
+    r = requests.get(f'https://api.freebinchecker.com/bin={BIN[:6]}').text
     soup = bs(r, features='html.parser')
     info_div = soup.find("div", {"class": "page"})
 
