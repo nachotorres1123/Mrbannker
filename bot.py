@@ -179,8 +179,10 @@ async def genrate(message: types.Message):
     await message.answer_chat_action('typing')
     ID = message.from_user.id
     FIRST = message.from_user.first_name
+    
     if len(message.text) == 0:
-        return await message.reply("<b>Format:\n /gen 549184</b>")
+        return await message.reply("<b>Formato:\n /gen 549184</b>")
+    
     try:
         x = re.findall(r'\d+', message.text)
         ccn = x[0]
@@ -200,13 +202,14 @@ async def genrate(message: types.Message):
             cards = gen(first_6=ccn, yy=mm)
         else:
             cards = gen(first_6=ccn, mm=mm)
+    
     await asyncio.sleep(3)
     DATA = f'''
-Genrated 1 card of <code>{ccn}</code>
+Generada 1 tarjeta de crédito de <code>{ccn}</code>
 <code>{cards}</code>
-BY: <a href="tg://user?id={ID}">{FIRST}</a>
+POR: <a href="tg://user?id={ID}">{FIRST}</a>
 BOT⇢ @{BOT_USERNAME}
-OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
+CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
     await message.reply(DATA)
 
