@@ -117,15 +117,31 @@ async def info(message: types.Message):
         is_bot = message.from_user.is_bot
         username = message.from_user.username
         first = message.from_user.first_name
-    await message.reply(f'''
-═════════╕
-<b>USER INFO</b>
-<b>USER ID:</b> <code>{user_id}</code>
-<b>USERNAME:</b> @{username}
-<b>FIRSTNAME:</b> {first}
-<b>BOT:</b> {is_bot}
-<b>BOT-OWNER:</b> {await is_owner(user_id)}
-╘═════════''')
+
+    user_info = f'''
+📋 <b>INFORMACIÓN DEL USUARIO</b> 📋
+
+🆔 <b>ID DE USUARIO:</b> <code>{user_id}</code>
+📛 <b>NOMBRE DE USUARIO:</b> @{username}
+👤 <b>NOMBRE:</b> {first}
+🤖 <b>ES UN BOT:</b> {'✅ Sí' if is_bot else '❌ No'}
+👑 <b>PROPIETARIO DEL BOT:</b> {'✅ Sí' if await is_owner(user_id) else '❌ No'}
+'''
+
+    user_status = f'''
+═════════════════════════════════════
+
+📊 <b>ESTADO DE USUARIO</b> 📊
+
+📮 <b>TIPO DE CHAT:</b> {message.chat.type}
+🌐 <b>IDIOMA DEL CHAT:</b> {message.from_user.language_code if message.from_user.language_code else 'Desconocido'}
+🕓 <b>FECHA Y HORA:</b> {message.date.strftime('%Y-%m-%d %H:%M:%S')}
+
+═════════════════════════════════════
+'''
+
+    await message.reply(user_info + user_status, parse_mode=types.ParseMode.HTML)
+
 
 
 @dp.message_handler(commands=['bin'], commands_prefix=PREFIX)
