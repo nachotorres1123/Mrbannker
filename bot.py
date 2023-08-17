@@ -100,10 +100,12 @@ async def helpstr(message: types.Message):
     MSG = f'''
 Hello {FIRST}, Im {BOT_NAME}
 U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
-😂
-😂
-😉
-Casa 🏡 
+Aquí tienes una lista de comandos que puedes usar
+    /chk - Verifica una tarjeta de crédito
+    /info - Muestra información sobre el usuario
+    /gen - Genera detalles de una tarjeta de crédito
+    /bin  - Obtiene información sobre un BIN
+🔗 También puedes encontrarme en
 Cmds /chk /info /gen /bin'''
     await message.answer(MSG, reply_markup=keyboard_markup,
                         disable_web_page_preview=True)
