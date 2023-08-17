@@ -157,21 +157,19 @@ async def binio(message: types.Message):
     FIRST = message.from_user.first_name
     BIN = message.text[len('/bin '):]
     if len(BIN) < 6:
-        return await message.reply(
-                   'Send bin not ass'
-        )
-    r = requests.get(
-               f'https://bins.ws/search?bins={BIN[:6]}'
-    ).text
+        return await message.reply('Por favor, envía un número BIN válido.')
+
+    r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
     soup = bs(r, features='html.parser')
-    k = soup.find("div", {"class": "page"})
-    INFO = f'''
+    info = f'''
+Información sobre el BIN: {BIN}
 {k.text[62:]}
-SENDER: <a href="tg://user?id={ID}">{FIRST}</a>
+REMITENTE: <a href="tg://user?id={ID}">{FIRST}</a>
 BOT⇢ @{BOT_USERNAME}
-OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
+CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
-    await message.reply(INFO)
+    await message.reply(info)
+
 
 
 @dp.message_handler(commands=['gen'], commands_prefix=PREFIX)
