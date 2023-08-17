@@ -135,21 +135,35 @@ async def binio(message: types.Message):
     FIRST = message.from_user.first_name
     BIN = message.text[len('/bin '):]
     if len(BIN) < 6:
-        return await message.reply(
-                   'Send bin not ass'
-        )
-    r = requests.get(
-               f'https://bins.ws/search?bins={BIN[:6]}'
-    ).text
+        return await message.reply('Send a valid BIN.')
+
+    r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
     soup = bs(r, features='html.parser')
-    k = soup.find("div", {"class": "page"})
-    INFO = f'''
-{k.text[62:]}
+    info_div = soup.find("div", {"class": "page"})
+
+    if info_div:
+        # Extracting more data from the page
+        card_type = soup.find("span", {"class": "card-type"}).text
+        country = soup.find("span", {"class": "country"}).text
+        bank = soup.find("span", {"class": "bank"}).text
+        level = soup.find("span", {"class": "level"}).text
+
+        INFO = f'''
+BIN: {BIN}
+Card Type: {card_type}
+Country: {country}
+Bank: {bank}
+Level: {level}
+Additional Info: {info_div.text[62:]}
 SENDER: <a href="tg://user?id={ID}">{FIRST}</a>
 BOT⇢ @{BOT_USERNAME}
 OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
 '''
+    else:
+        INFO = f'No information available for BIN: {BIN}'
+
     await message.reply(INFO)
+
 
 
 @dp.message_handler(commands=['gen'], commands_prefix=PREFIX)
