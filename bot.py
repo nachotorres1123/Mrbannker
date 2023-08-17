@@ -403,6 +403,26 @@ async def ch(message: types.Message):
 <b>OWNER</b>: {await is_owner(ID)}
 <b>BOT</b>: @{BOT_USERNAME}''')
 
+# ... (código principal)
+
+@dp.message_handler(commands=['search'], commands_prefix=PREFIX)
+async def search_web_and_send_result(message: types.Message):
+    await message.answer_chat_action('typing')
+    
+    query = message.text[len('/search '):]
+    # Envía el dato a la página web para buscar el resultado
+    response = requests.get(f'https://example.com/search?query={query}')
+    
+    if response.status_code == 200:
+        soup = bs(response.text, 'html.parser')
+        # Aquí selecciona los elementos que deseas extraer usando métodos de BeautifulSoup
+        result = soup.find('div', {'class': 'result'}).text
+        
+        # Envía el resultado al bot de Telegram
+        await message.reply(result)
+    else:
+        await message.reply('No se pudo obtener el resultado.')
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, loop=loop)
