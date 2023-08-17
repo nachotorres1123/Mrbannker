@@ -94,21 +94,21 @@ async def is_owner(user_id):
 async def helpstr(message: types.Message):
     # await message.answer_chat_action('typing')
     keyboard_markup = types.InlineKeyboardMarkup(row_width=3)
-    btns = types.InlineKeyboardButton("Bot Source", url="https://github.com/nachotorres1123/Mrbannker")
+    btns = types.InlineKeyboardButton("👉 Bot Source", url="https://github.com/nachotorres1123/Mrbannker")
     keyboard_markup.row(btns)
     FIRST = message.from_user.first_name
     MSG = f'''
-Hello {FIRST}, Im {BOT_NAME}
-U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
-Aquí tienes una lista de comandos que puedes usar
-    /chk - Verifica una tarjeta de crédito
-    /info - Muestra información sobre el usuario
-    /gen - Genera detalles de una tarjeta de crédito
-    /bin  - Obtiene información sobre un BIN
-🔗 También puedes encontrarme en
+👋 ¡Hola, {FIRST}, Soy {BOT_NAME}.
+Puedes encontrar a mi creador <a href="tg://user?id={OWNER}">AQUÍ</a>.
+Aquí tienes una lista de comandos que puedes usar:
+🔍 /chk - Verifica una tarjeta de crédito
+📋 /info - Muestra información sobre el usuario
+🔐 /gen - Genera detalles de una tarjeta de crédito
+🔍 /bin - Obtiene información sobre un BIN
+
+🔗 También puedes encontrarme en:
 Cmds /chk /info /gen /bin'''
-    await message.answer(MSG, reply_markup=keyboard_markup,
-                        disable_web_page_preview=True)
+    await message.answer(MSG, reply_markup=keyboard_markup, disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['info', 'id'], commands_prefix=PREFIX)
