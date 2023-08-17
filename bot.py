@@ -168,16 +168,16 @@ async def genrate(message: types.Message):
         cards = gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv)
     except IndexError:
         if len(x) == 1:
-    for _ in range(20):
-        cards = gen(first_6=ccn)
-elif len(x) == 3:
-    cards = gen(first_6=ccn, mm=mm, yy=yy)
-elif len(mm) == 3:
-    cards = gen(first_6=ccn, cvv=mm)
-elif len(mm) == 4:
-    cards = gen(first_6=ccn, yy=mm)
-else:
-    cards = gen(first_6=ccn, mm=mm)
+            for _ in range(20):
+                cards = gen(first_6=ccn)
+        elif len(x) == 3:
+            cards = gen(first_6=ccn, mm=mm, yy=yy)
+        elif len(mm) == 3:
+            cards = gen(first_6=ccn, cvv=mm)
+        elif len(mm) == 4:
+            cards = gen(first_6=ccn, yy=mm)
+        else:
+            cards = gen(first_6=ccn, mm=mm)
     await asyncio.sleep(3)
     DATA = f'''
 Genrated 1 card of <code>{ccn}</code>
