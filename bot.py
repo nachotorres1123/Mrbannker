@@ -156,9 +156,10 @@ async def binio(message: types.Message):
     ID = message.from_user.id
     FIRST = message.from_user.first_name
     BIN = message.text[len('/bin '):]
+    
     if len(BIN) < 6:
         return await message.reply('Por favor, envía un número BIN válido.')
-
+    
     r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
     soup = bs(r, features='html.parser')
     info = f'''
@@ -169,6 +170,7 @@ BOT⇢ @{BOT_USERNAME}
 CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
     await message.reply(info)
+
 
 
 
