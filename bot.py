@@ -103,11 +103,10 @@ Puedes encontrar a mi creador <a href="tg://user?id={OWNER}">AQUÍ</a>.
 Aquí tienes una lista de comandos que puedes usar:
 🔍 /chk - Verifica una tarjeta de crédito
 📋 /info - Muestra información sobre el usuario
-🔐 /gen - Genera detalles de una tarjeta de crédito
+🔐 /genf - Genera 1 una tarjeta de crédito
+🔐 /gen - Genera 15 tarjetas de crédito
 🔍 /bin - Obtiene información sobre un BIN
-
-🔗 También puedes encontrarme en:
-Cmds /chk /info /gen /bin'''
+Cmds /info /chk /gen /bin /genf'''
     await message.answer(MSG, reply_markup=keyboard_markup, disable_web_page_preview=True)
 
 
@@ -193,7 +192,7 @@ async def generate_cards(message: types.Message):
         cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
     except IndexError:
         if len(x) == 1:
-            num_of_cards = 15  # Número de tarjetas a generar
+            num_of_cards = 1  # Número de tarjetas a generar
             cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
         elif len(x) == 3:
             cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
@@ -235,7 +234,7 @@ async def generate_cards(message: types.Message):
         cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
     except IndexError:
         if len(x) == 1:
-            num_of_cards = 30  # Número de tarjetas a generar
+            num_of_cards = 15  # Número de tarjetas a generar
             cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
         elif len(x) == 3:
             cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
