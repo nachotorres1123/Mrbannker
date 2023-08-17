@@ -137,16 +137,24 @@ async def binio(message: types.Message):
     if len(BIN) < 6:
         return await message.reply('Send a valid BIN.')
 
-    r = requests.get(f'https://api.freebinchecker.com/bin={BIN[:6]}').text
-    soup = bs(r, features='html.parser')
-    info_div = soup.find("div", {"class": "page"})
+    # Replacing the old API request with the new one
+    headers = {
+        'X-RapidAPI-Key': "8591782eb8msh35855b7b3e23774p11ee22jsncda4429bc4ec",
+        'X-RapidAPI-Host': "bin-ip-checker.p.rapidapi.com"
+    }
+    payload = {
+        "bin": BIN
+    }
+    
+    response = requests.post("https://bin-ip-checker.p.rapidapi.com/", headers=headers, json=payload)
+    data = response.json()
 
-    if info_div:
-        # Extracting more data from the page
-        card_type = soup.find("span", {"class": "card-type"}).text
-        country = soup.find("span", {"class": "country"}).text
-        bank = soup.find("span", {"class": "bank"}).text
-        level = soup.find("span", {"class": "level"}).text
+    if 'card_type' in data:
+        card_type = data['card_type']
+        country = data['country']
+        bank = data['bank']
+        level = data['level']
+        additional_info = data['additional_info']
 
         INFO = f'''
 BIN: {BIN}
@@ -154,7 +162,7 @@ Card Type: {card_type}
 Country: {country}
 Bank: {bank}
 Level: {level}
-Additional Info: {info_div.text[62:]}
+Additional Info: {additional_info}
 SENDER: <a href="tg://user?id={ID}">{FIRST}</a>
 BOT⇢ @{BOT_USERNAME}
 OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
@@ -163,6 +171,7 @@ OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
         INFO = f'No information available for BIN: {BIN}'
 
     await message.reply(INFO)
+
 
 
 
