@@ -180,7 +180,7 @@ async def generate_cards(message: types.Message):
     FIRST = message.from_user.first_name
     
     if len(message.text) == 0:
-        return await message.reply("<b>Formato:</b>\n<code>/genf 549184</code>")
+        return await message.reply("<b>Formato:</b>\n<code>/genf 549184</code>", parse_mode='HTML')
     
     try:
         x = re.findall(r'\d+', message.text)
@@ -191,17 +191,19 @@ async def generate_cards(message: types.Message):
         num_of_cards = 5  # Número de tarjetas a generar
         cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
     except IndexError:
-        if len(x) == 1:
-            num_of_cards = 15  # Número de tarjetas a generar
+        if len(x) == 0:
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar al menos los primeros 6 dígitos del BIN.</b>", parse_mode='HTML')
+        elif len(x) == 1:
+            num_of_cards = 1  # Número de tarjetas a generar
             cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
         elif len(x) == 3:
-            cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos, mes y año de expiración.</b>", parse_mode='HTML')
         elif len(mm) == 3:
-            cards_list = [gen(first_6=ccn, cvv=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el CVV.</b>", parse_mode='HTML')
         elif len(mm) == 4:
-            cards_list = [gen(first_6=ccn, yy=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el año de expiración.</b>", parse_mode='HTML')
         else:
-            cards_list = [gen(first_6=ccn, mm=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el mes de expiración.</b>", parse_mode='HTML')
     
     await asyncio.sleep(3)
     cards_info = '\n'.join([f'<code>{card}</code>' for card in cards_list])
@@ -222,7 +224,7 @@ async def generate_cards(message: types.Message):
     FIRST = message.from_user.first_name
     
     if len(message.text) == 0:
-        return await message.reply("<b>Formato:</b>\n<code>/gen 549184</code>")
+        return await message.reply("<b>Formato:</b>\n<code>/gen 549184</code>", parse_mode='HTML')
     
     try:
         x = re.findall(r'\d+', message.text)
@@ -233,17 +235,19 @@ async def generate_cards(message: types.Message):
         num_of_cards = 5  # Número de tarjetas a generar
         cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
     except IndexError:
-        if len(x) == 1:
-            num_of_cards = 30  # Número de tarjetas a generar
+        if len(x) == 0:
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar al menos los primeros 6 dígitos del BIN.</b>", parse_mode='HTML')
+        elif len(x) == 1:
+            num_of_cards = 15  # Número de tarjetas a generar
             cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
         elif len(x) == 3:
-            cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos, mes y año de expiración.</b>", parse_mode='HTML')
         elif len(mm) == 3:
-            cards_list = [gen(first_6=ccn, cvv=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el CVV.</b>", parse_mode='HTML')
         elif len(mm) == 4:
-            cards_list = [gen(first_6=ccn, yy=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el año de expiración.</b>", parse_mode='HTML')
         else:
-            cards_list = [gen(first_6=ccn, mm=mm)]
+            return await message.reply("<b>Formato incorrecto. Debes proporcionar los primeros 6 dígitos y el mes de expiración.</b>", parse_mode='HTML')
     
     await asyncio.sleep(3)
     cards_info = '\n'.join([f'<code>{card}</code>' for card in cards_list])
@@ -255,6 +259,7 @@ async def generate_cards(message: types.Message):
 <b>CREADOR:</b> <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
     await message.reply(DATA, parse_mode='HTML')
+
 
 
 
