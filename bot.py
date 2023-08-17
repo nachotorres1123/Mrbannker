@@ -98,19 +98,12 @@ async def helpstr(message: types.Message):
     keyboard_markup.row(btns)
     FIRST = message.from_user.first_name
     MSG = f'''
-Hola {FIRST}, Soy {BOT_NAME}
-PUEDES ENCONTRAR A MI JEFE <a href="tg://user?id={OWNER}">HERE</a>
-👋tu asistente bancario virtual
-📚 Aquí tienes una lista de comandos que puedes usar
-    /chk <code> - Verifica una tarjeta de crédito
-    /info - Muestra información sobre el usuario
-    /gen <bin> - Genera detalles de una tarjeta de crédito
-    /bin <bin> - Obtiene información sobre un bin
-🌐 Además, puedes revisar mi código fuente en GitHub:
+Hello {FIRST}, Im {BOT_NAME}
+U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
 Cmds /chk /info /gen /bin'''
     await message.answer(MSG, reply_markup=keyboard_markup,
                         disable_web_page_preview=True)
- 
+
 
 @dp.message_handler(commands=['info', 'id'], commands_prefix=PREFIX)
 async def info(message: types.Message):
