@@ -99,6 +99,18 @@ async def helpstr(message: types.Message):
     FIRST = message.from_user.first_name
     MSG = f'''
 Hola {FIRST}, Soy {BOT_NAME}
+👋 ¡Hola {FIRST}, Soy {BOT_NAME}  tu asistente bancario virtual.
+
+📚 Aquí tienes una lista de comandos que puedes usar:
+    /chk <code> - Verifica una tarjeta de crédito.
+    /info - Muestra información sobre el usuario.
+    /gen <bin> - Genera detalles de una tarjeta de crédito.
+    /bin <bin> - Obtiene información sobre un BIN.
+
+🔗 También puedes encontrarme en:
+    <a href="tg://user?id={OWNER}">Mi Creador</a>
+
+🌐 Además, puedes revisar mi código fuente en GitHub:
 PUEDES ENCONTRAR A MI JEFE <a href="tg://user?id={OWNER}">HERE</a>
 EJKEKWJWIWIWJDJWIWJDHDKSJDHDISKSHSHSHSLDJD
 Cmds /chk /info /gen /bin'''
