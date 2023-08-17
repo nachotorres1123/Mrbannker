@@ -106,7 +106,8 @@ Aquí tienes una lista de comandos que puedes usar:
 🔐 /genf - Genera 1 una tarjeta de crédito
 🔐 /gen - Genera 15 tarjetas de crédito
 🔍 /bin - Obtiene información sobre un BIN
-Cmds /info /chk /gen /bin /genf'''
+🌏 /search - Extraer datos 
+Cmds /info /chk /gen /bin /genf /search'''
     await message.answer(MSG, reply_markup=keyboard_markup, disable_web_page_preview=True)
 
 
