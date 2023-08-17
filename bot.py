@@ -89,7 +89,6 @@ def gen(first_6: int, mm: int=None, yy: int=None, cvv: int=None):
 async def is_owner(user_id):
     return user_id == OWNER
 
-
 @dp.message_handler(commands=['start', 'help'], commands_prefix=PREFIX)
 async def helpstr(message: types.Message):
     keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
@@ -113,6 +112,7 @@ async def helpstr(message: types.Message):
 '''
 
     await message.answer(help_msg, reply_markup=keyboard_markup, disable_web_page_preview=True, parse_mode=types.ParseMode.HTML)
+
 
 
 
