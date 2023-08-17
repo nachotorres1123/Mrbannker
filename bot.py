@@ -92,17 +92,27 @@ async def is_owner(user_id):
 
 @dp.message_handler(commands=['start', 'help'], commands_prefix=PREFIX)
 async def helpstr(message: types.Message):
-    # await message.answer_chat_action('typing')
     keyboard_markup = types.InlineKeyboardMarkup(row_width=3)
-    btns = types.InlineKeyboardButton("Bot Source", url="https://github.com/nachotorres1123/Mrbannker")
+    btns = types.InlineKeyboardButton("📂 Código Fuente del Bot", url="https://github.com/nachotorres1123/Mrbannker")
     keyboard_markup.row(btns)
+    
     FIRST = message.from_user.first_name
-    MSG = f'''
-Hello {FIRST}, Im {BOT_NAME}
-U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
-Cmds /chk /info /gen /bin'''
-    await message.answer(MSG, reply_markup=keyboard_markup,
-                        disable_web_page_preview=True)
+    welcome_msg = f'''
+🤖 ¡Hola {FIRST}! Soy {BOT_NAME}, tu asistente bancario virtual.
+
+📚 Aquí tienes una lista de comandos que puedes usar:
+    /chk <code> - Verifica una tarjeta de crédito.
+    /info - Muestra información sobre el usuario.
+    /gen <bin> - Genera detalles de una tarjeta de crédito.
+    /bin <bin> - Obtiene información sobre un BIN.
+
+👤 También puedes encontrarme en:
+    <a href="tg://user?id={OWNER}">Mi Creador</a>
+
+🌐 Además, puedes revisar mi código fuente en GitHub:https://github.com/nachotorres1123/Mrbannker
+
+    await message.answer(welcome_msg, reply_markup=keyboard_markup, disable_web_page_preview=True, parse_mode=types.ParseMode.HTML)
+
 
 
 @dp.message_handler(commands=['info', 'id'], commands_prefix=PREFIX)
