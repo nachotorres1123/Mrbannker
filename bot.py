@@ -106,7 +106,7 @@ PUEDES ENCONTRAR A MI JEFE <a href="tg://user?id={OWNER}">HERE</a>
     /info - Muestra información sobre el usuario
     /gen <bin> - Genera detalles de una tarjeta de crédito
     /bin <bin> - Obtiene información sobre un bin
-🌐 Además, puedes revisar mi código fuente en GitHub: 
+🌐 Además, puedes revisar mi código fuente en GitHub:
 Cmds /chk /info /gen /bin'''
     await message.answer(MSG, reply_markup=keyboard_markup,
                         disable_web_page_preview=True)
