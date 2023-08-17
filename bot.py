@@ -100,7 +100,7 @@ async def helpstr(message: types.Message):
     MSG = f'''
 Hello {FIRST}, Im {BOT_NAME}
 U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
-Cmds /chk /info /bin'''
+Cmds /chk /info /gen /bin'''
     await message.answer(MSG, reply_markup=keyboard_markup,
                         disable_web_page_preview=True)
 
@@ -135,44 +135,21 @@ async def binio(message: types.Message):
     FIRST = message.from_user.first_name
     BIN = message.text[len('/bin '):]
     if len(BIN) < 6:
-        return await message.reply('Send a valid BIN.')
-
-    # Replacing the old API request with the new one
-    headers = {
-        'X-RapidAPI-Key': "8591782eb8msh35855b7b3e23774p11ee22jsncda4429bc4ec",
-        'X-RapidAPI-Host': "bin-ip-checker.p.rapidapi.com"
-    }
-    payload = {
-        "bin": BIN
-    }
-    
-    response = requests.post("https://bin-ip-checker.p.rapidapi.com/", headers=headers, json=payload)
-    data = response.json()
-
-    if 'card_type' in data:
-        card_type = data['card_type']
-        country = data['country']
-        bank = data['bank']
-        level = data['level']
-        additional_info = data['additional_info']
-
-        INFO = f'''
-BIN: {BIN}
-Card Type: {card_type}
-Country: {country}
-Bank: {bank}
-Level: {level}
-Additional Info: {additional_info}
+        return await message.reply(
+                   'Send bin not ass'
+        )
+    r = requests.get(
+               f'https://bins.ws/search?bins={BIN[:6]}'
+    ).text
+    soup = bs(r, features='html.parser')
+    k = soup.find("div", {"class": "page"})
+    INFO = f'''
+{k.text[62:]}
 SENDER: <a href="tg://user?id={ID}">{FIRST}</a>
 BOT⇢ @{BOT_USERNAME}
 OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
 '''
-    else:
-        INFO = f'No information available for BIN: {BIN}'
-
     await message.reply(INFO)
-
-
 
 
 @dp.message_handler(commands=['gen'], commands_prefix=PREFIX)
