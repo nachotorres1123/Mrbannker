@@ -89,31 +89,20 @@ def gen(first_6: int, mm: int=None, yy: int=None, cvv: int=None):
 async def is_owner(user_id):
     return user_id == OWNER
 
+
 @dp.message_handler(commands=['start', 'help'], commands_prefix=PREFIX)
 async def helpstr(message: types.Message):
-    keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
-    btn_source = types.InlineKeyboardButton("📂 Código Fuente del Bot", url="https://github.com/nachotorres1123/Mrbannker")
-    keyboard_markup.add(btn_source)
-    
+    # await message.answer_chat_action('typing')
+    keyboard_markup = types.InlineKeyboardMarkup(row_width=3)
+    btns = types.InlineKeyboardButton("Bot Source", url="https://github.com/nachotorres1123/Mrbannker")
+    keyboard_markup.row(btns)
     FIRST = message.from_user.first_name
-    help_msg = f'''
-👋 ¡Hola {FIRST}! Soy {BOT_NAME}, tu asistente bancario virtual.
-
-📚 Aquí tienes una lista de comandos que puedes usar:
-    /chk <code> - Verifica una tarjeta de crédito.
-    /info - Muestra información sobre el usuario.
-    /gen <bin> - Genera detalles de una tarjeta de crédito.
-    /bin <bin> - Obtiene información sobre un BIN.
-
-🔗 También puedes encontrarme en:
-    <a href="tg://user?id={OWNER}">Mi Creador</a>
-
-🌐 Además, puedes revisar mi código fuente en GitHub:
-'''
-
-    await message.answer(help_msg, reply_markup=keyboard_markup, disable_web_page_preview=True, parse_mode=types.ParseMode.HTML)
-
-
+    MSG = f'''
+Hello {FIRST}, Im {BOT_NAME}
+U can find my Boss  <a href="tg://user?id={OWNER}">HERE</a>
+Cmds /chk /info /gen /bin'''
+    await message.answer(MSG, reply_markup=keyboard_markup,
+                        disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['info', 'id'], commands_prefix=PREFIX)
