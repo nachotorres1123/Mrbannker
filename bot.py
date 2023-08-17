@@ -217,6 +217,7 @@ CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 
 
 
+
 @dp.message_handler(commands=['chk'], commands_prefix=PREFIX)
 async def ch(message: types.Message):
     await message.answer_chat_action('typing')
