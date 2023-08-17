@@ -174,14 +174,14 @@ CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 
 
 
-@dp.message_handler(commands=['gen'], commands_prefix=PREFIX)
+@dp.message_handler(commands=['genf'], commands_prefix=PREFIX)
 async def generate_cards(message: types.Message):
     await message.answer_chat_action('typing')
     ID = message.from_user.id
     FIRST = message.from_user.first_name
     
     if len(message.text) == 0:
-        return await message.reply("<b>Formato:\n /gen 549184</b>")
+        return await message.reply("<b>Formato:\n /genf 549184</b>")
     
     try:
         x = re.findall(r'\d+', message.text)
@@ -193,7 +193,7 @@ async def generate_cards(message: types.Message):
         cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
     except IndexError:
         if len(x) == 1:
-            num_of_cards = 20  # Número de tarjetas a generar
+            num_of_cards = 15  # Número de tarjetas a generar
             cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
         elif len(x) == 3:
             cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
@@ -215,6 +215,47 @@ CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
     await message.reply(DATA)
 
+
+@dp.message_handler(commands=['gen'], commands_prefix=PREFIX)
+async def generate_cards(message: types.Message):
+    await message.answer_chat_action('typing')
+    ID = message.from_user.id
+    FIRST = message.from_user.first_name
+    
+    if len(message.text) == 0:
+        return await message.reply("<b>Formato:\n /gen 549184</b>")
+    
+    try:
+        x = re.findall(r'\d+', message.text)
+        ccn = x[0]
+        mm = x[1]
+        yy = x[2]
+        cvv = x[3]
+        num_of_cards = 5  # Número de tarjetas a generar
+        cards_list = [gen(first_6=ccn, mm=mm, yy=yy, cvv=cvv) for _ in range(num_of_cards)]
+    except IndexError:
+        if len(x) == 1:
+            num_of_cards = 30  # Número de tarjetas a generar
+            cards_list = [gen(first_6=ccn) for _ in range(num_of_cards)]
+        elif len(x) == 3:
+            cards_list = [gen(first_6=ccn, mm=mm, yy=yy)]
+        elif len(mm) == 3:
+            cards_list = [gen(first_6=ccn, cvv=mm)]
+        elif len(mm) == 4:
+            cards_list = [gen(first_6=ccn, yy=mm)]
+        else:
+            cards_list = [gen(first_6=ccn, mm=mm)]
+    
+    await asyncio.sleep(3)
+    cards_info = '\n'.join([f'<code>{card}</code>' for card in cards_list])
+    DATA = f'''
+Generadas {num_of_cards} tarjetas de crédito de <code>{ccn}</code>:
+{cards_info}
+POR: <a href="tg://user?id={ID}">{FIRST}</a>
+BOT⇢ @{BOT_USERNAME}
+CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
+'''
+    await message.reply(DATA)
 
 
 
