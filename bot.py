@@ -420,13 +420,12 @@ async def add_php_data(message: types.Message):
     url = 'https://fakepersongenerator.com/Index/generate'
     
     try:
-    response = requests.get(url, headers={
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; vivo 1806) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.64 Mobile Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-    })
-    response.raise_for_status()  # Agrega esta línea para manejar errores HTTP
-    if response.status_code == 200:
+        response = requests.get(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; vivo 1806) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.64 Mobile Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+        })
+        if response.status_code == 200:
             soup = bs(response.content, 'html.parser')
             
             # Obtener nombre completo
@@ -452,10 +451,10 @@ Código Postal: {zip_code}
 '''
             await message.reply(response_text)
         else:
-        await message.reply("No se pudo acceder a la página.")
-except Exception as e:
-    print(f"Error: {e}")
-    await message.reply("Ocurrió un error al obtener los datos.")
+            await message.reply("No se pudo acceder a la página.")
+    except Exception as e:
+        await message.reply("Ocurrió un error al obtener los datos.")
+
 # ... (resto del código)
 
 if __name__ == '__main__':
