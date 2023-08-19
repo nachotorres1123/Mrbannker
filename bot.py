@@ -352,5 +352,4 @@ async def ch(message: types.Message):
 <b>BOT</b>: @{BOT_USERNAME}''')
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     executor.start_polling(dp, skip_updates=True, loop=loop)
