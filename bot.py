@@ -90,50 +90,8 @@ def gen(first_6: int, mm: int=None, yy: int=None, cvv: int=None):
 async def is_owner(user_id):
     return user_id == OWNER
 
-# Fragmento de código para obtener datos de una página web
-async def get_website_data():
-    url = 'https://fakepersongenerator.com/Index/generate'
-    
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; vivo 1806) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.64 Mobile Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-    }
-
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            soup = bs(response.content, 'html.parser')
-            
-            # Obtener nombre completo
-            name = soup.find('b', class_='click').text
-            first = name.split(' ')[0]
-            last = name.split(' ')[-1]
-            
-            # Obtener dirección
-            street = soup.find('p', string=re.compile(r'Street:')).find_next('b').text
-            stct = soup.find('p', string=re.compile(r'City, State, Zip:')).find_next('b').text
-            city = stct.split(',')[0].strip()
-            statefull = stct.split(',')[1].strip()
-            state = statefull[statefull.index('(') + 1:statefull.index(')')]
-            zip_code = stct.split(',')[2].strip()
-            
-            return f'Nombre: {first} {last}\nCalle: {street}\nCiudad: {city}\nEstado: {state}\nCódigo Postal: {zip_code}'
-        else:
-            return "No se pudo acceder a la página."
-    except Exception as e:
-        return "Ocurrió un error al obtener los datos."
-
-# Manejador de comandos para obtener datos de la página web
-@dp.message_handler(commands=['add'], commands_prefix=PREFIX)
-async def add_php_data(message: types.Message):
-    await message.answer_chat_action('typing')
-    
-    website_data = await get_website_data()
-    await message.reply(website_data)
-
-URL de tu código PHP alojado en Heroku o en otro servidor
-php_url = 'https://randomaddress-9d94ddea293c.herokuapp.com'
+#URL de tu código PHP alojado en Heroku o en otro servidor
+php_url = 'https://nombre-de-tu-app-heroku.herokuapp.com'
 
 # Función para llamar al código PHP y obtener los resultados
 async def get_data_from_php():
