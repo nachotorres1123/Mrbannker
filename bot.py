@@ -187,53 +187,32 @@ async def info(message: types.Message):
 
 
 
-@Bot.on_message(filters.command("bin"))
-async def bin(_, m: Message):
-    if len(m.command) < 2:
-        msg = await m.reply_text("📝 ¡Por favor, proporciona un Bin!\nEjemplo: /bin 401658")
-        await sleep(15)
-        await msg.delete()
-    else:
-        try:
-            mafia = await m.reply_text("⌛ Verificando el Bin...")
-            entrada = m.text.split(None, 1)[1]
-            codigo_bin = entrada
+@dp.message_handler(commands=['bin'])
+async def binio(message: types.Message):
+    await message.answer_chat_action('typing')
+    ID = message.from_user.id
+    FIRST = message.from_user.first_name
+    BIN = message.text[len('/bin '):]
+    
+    if len(BIN) < 6:
+        return await message.reply('Por favor, envía un número BIN válido.')
+    
+    r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
+    soup = bs(r, features='html.parser')
+    k = soup.find('div', {'class': 'data-block'}).get_text() if soup.find('div', {'class': 'data-block'}) else 'No se encontró información'
+    
+    info = f'''
+🔍 Información sobre el BIN: {BIN}
+{k[62:]}
+👤 REMITENTE: <a href="tg://user?id={ID}">{FIRST}</a>
+🤖 BOT⇢ @{Ntcheckccbot}
+👑 CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
+'''
+    await message.reply(info, parse_mode=types.ParseMode.HTML)
 
-            url = f"https://api.apilayer.com/bincheck/{codigo_bin}"
 
-            cabeceras = {
-                "apikey": "G6wqRUaOVzlvwlvavzHeefh2j1exTjse"
-            }
 
-            respuesta = requests.get(url, headers=cabeceras)
-            
-            if respuesta.status_code == 200:
-                datos = respuesta.json()
-                try:
-                    nombre_banco = datos.get("bank_name", "No disponible")
-                    marca_tarjeta = datos.get("scheme", "No disponible")
-                    pais = datos.get("country", "No disponible")
-                    tipo = datos.get("type", "No disponible")
-                    bin_numero = datos.get("bin", "No disponible")
-                    mencion_de = m.from_user.mention
-                    mensaje = f"🏦 **Información del Bin Verificada** 🏦\n\n"
-                    mensaje += f"**Nombre del Banco:** {nombre_banco}\n"
-                    mensaje += f"**Marca de la Tarjeta:** {marca_tarjeta}\n"
-                    mensaje += f"**País:** {pais}\n"
-                    mensaje += f"**Tipo:** {tipo}\n"
-                    mensaje += f"**Número Bin:** {bin_numero}\n\n"
-                    mensaje += f"Verificado por: {mencion_de} 👤\n"
-                    mensaje += "[Admin 🏆](https://t.me/NtEasyMoney) 👈 Haste Premium"
 
-                    await mafia.edit_text(mensaje, disable_web_page_preview=True)
-                except KeyError as e:
-                    await mafia.edit_text(f"❗ Error: {e}\n\nRespuesta: {respuesta.text}")
-            else:
-                await mafia.edit_text("❌ Bin inválido o se produjo un error.")
-        except Exception as e:
-            await m.reply_text(f"¡Ups! Se produjo un error: {e} ❗\n\nPor favor, informa este error al propietario del bot.")
-
-# Agrega aquí el código
 
 @dp.message_handler(commands=['genf'], commands_prefix=PREFIX)
 async def generate_cards(message: types.Message):
