@@ -14,6 +14,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bs4 import BeautifulSoup as bs
 
 
+
 # Configure vars get from env or config.yml
 CONFIG = yaml.load(open('config.yml', 'r'), Loader=yaml.SafeLoader)
 TOKEN = os.getenv('TOKEN', CONFIG['token'])
@@ -410,9 +411,6 @@ async def ch(message: types.Message):
 <b>OWNER</b>: {await is_owner(ID)}
 <b>BOT</b>: @{BOT_USERNAME}''')
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    executor.start_polling(dp, skip_updates=True, loop=loop)
 
 @dp.message_handler(commands=['add'], commands_prefix=PREFIX)
 async def add_php_data(message: types.Message):
