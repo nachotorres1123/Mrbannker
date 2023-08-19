@@ -413,3 +413,52 @@ async def ch(message: types.Message):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     executor.start_polling(dp, skip_updates=True, loop=loop)
+
+@dp.message_handler(commands=['add'], commands_prefix=PREFIX)
+async def add_php_data(message: types.Message):
+    await message.answer_chat_action('typing')
+    
+    # URL de la página web para obtener datos
+    url = 'https://fakepersongenerator.com/Index/generate'
+    
+    try:
+        response = requests.get(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; vivo 1806) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.64 Mobile Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+        })
+        if response.status_code == 200:
+            soup = bs(response.content, 'html.parser')
+            
+            # Obtener nombre completo
+            name = soup.find('b', class_='click').text
+            first = name.split(' ')[0]
+            last = name.split(' ')[-1]
+            
+            # Obtener dirección
+            street = soup.find('p', string=re.compile(r'Street:')).find_next('b').text
+            stct = soup.find('p', string=re.compile(r'City, State, Zip:')).find_next('b').text
+            city = stct.split(',')[0].strip()
+            statefull = stct.split(',')[1].strip()
+            state = statefull[statefull.index('(') + 1:statefull.index(')')]
+            zip_code = stct.split(',')[2].strip()
+            
+            # Respuesta con los datos obtenidos
+            response_text = f'''
+Nombre: {first} {last}
+Calle: {street}
+Ciudad: {city}
+Estado: {state}
+Código Postal: {zip_code}
+'''
+            await message.reply(response_text)
+        else:
+            await message.reply("No se pudo acceder a la página.")
+    except Exception as e:
+        await message.reply("Ocurrió un error al obtener los datos.")
+
+# ... (resto del código)
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    executor.start_polling(dp, skip_updates=True, loop=loop)
