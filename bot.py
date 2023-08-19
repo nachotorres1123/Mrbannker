@@ -138,13 +138,13 @@ async def helpstr(message: types.Message):
 👋 ¡Hola, {FIRST}, Soy {BOT_NAME}.
 Puedes encontrar a mi creador <a href="tg://user?id={OWNER}">AQUÍ</a>.
 Aquí tienes una lista de comandos que puedes usar:
-🔍 /chk - Verifica una tarjeta de crédito
-📋 /info - Muestra información sobre el usuario
+📋 /info - Muestra información sobre el usuario 
 🔐 /genf - Genera 1 una tarjeta de crédito
 🔐 /gen - Genera 15 tarjetas de crédito
 🔍 /bin - Obtiene información sobre un BIN
-🌏 /search - Extraer datos 
-Cmds /info /chk /gen /bin /genf /search'''
+💳 /chk - Verifica una tarjeta de crédito 
+🌏 /adr - Otener Nombre y dirección aleatoria 🔀 
+Cmds /info /chk /gen /bin /genf /adr'''
     await message.answer(MSG, reply_markup=keyboard_markup, disable_web_page_preview=True)
 
 
