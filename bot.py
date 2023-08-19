@@ -131,7 +131,7 @@ async def handle_adr(message: types.Message):
 async def helpstr(message: types.Message):
     # await message.answer_chat_action('typing')
     keyboard_markup = types.InlineKeyboardMarkup(row_width=3)
-    btns = types.InlineKeyboardButton("👉 Bot Source", url="https://t.me/NtEasyM0ney")
+    btns = types.InlineKeyboardButton("👉 Premium 🏆 ", url="https://t.me/NtEasyMoney")
     keyboard_markup.row(btns)
     FIRST = message.from_user.first_name
     MSG = f'''
