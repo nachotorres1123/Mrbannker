@@ -187,7 +187,7 @@ async def info(message: types.Message):
 
 
 
-@dp.message_handler(commands=['bin'], commands_prefix=PREFIX)
+@dp.message_handler(commands=['bin'])
 async def binio(message: types.Message):
     await message.answer_chat_action('typing')
     ID = message.from_user.id
@@ -199,14 +199,17 @@ async def binio(message: types.Message):
     
     r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
     soup = bs(r, features='html.parser')
+    k = soup.find('div', {'class': 'data-block'}).get_text() if soup.find('div', {'class': 'data-block'}) else 'No se encontró información'
+    
     info = f'''
-Información sobre el BIN: {BIN}
-{k.text[62:]}
-REMITENTE: <a href="tg://user?id={ID}">{FIRST}</a>
-BOT⇢ @{BOT_USERNAME}
-CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
+🔍 Información sobre el BIN: {BIN}
+{k[62:]}
+👤 REMITENTE: <a href="tg://user?id={ID}">{FIRST}</a>
+🤖 BOT⇢ @{Ntcheckccbot}
+👑 CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
 '''
-    await message.reply(info)
+    await message.reply(info, parse_mode=types.ParseMode.HTML)
+
 
 
 
