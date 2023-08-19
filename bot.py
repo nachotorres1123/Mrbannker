@@ -93,22 +93,39 @@ async def is_owner(user_id):
 #URL de tu código PHP alojado en Heroku o en otro servidor
 php_url = 'https://randomaddress-9d94ddea293c.herokuapp.com/'
 
+
 # Función para llamar al código PHP y obtener los resultados
 async def get_data_from_php():
     try:
         response = requests.get(php_url)
         if response.status_code == 200:
-            return response.text
+            return response.json()  # Convertir la respuesta JSON a un diccionario
         else:
-            return "No se pudo obtener los datos del código PHP."
+            return None
     except Exception as e:
-        return "Ocurrió un error al llamar al código PHP."
+        return None
 
 # Llamada a la función desde tu bot de Telegram (ejemplo)
 @dp.message_handler(commands=['get_data'])
 async def handle_get_data(message: types.Message):
+    await message.answer_chat_action('typing')
+    
     data = await get_data_from_php()
-    await message.reply(data)
+    
+    if data:
+        formatted_data = f'''
+🌍 <b>Datos obtenidos:</b>
+👤 <i>Nombre:</i> {data['first']} {data['last']}
+🏠 <i>Dirección:</i> {data['street']}
+🏙️ <i>Ciudad:</i> {data['city']}
+🌆 <i>Estado:</i> {data['state']}
+📮 <i>Código Postal:</i> {data['zip']}
+📞 <i>Teléfono:</i> {data['phone']}
+'''
+    else:
+        formatted_data = "❌ No se pudieron obtener los datos del código PHP."
+    
+    await message.reply(formatted_data, parse_mode=types.ParseMode.HTML)
 
 @dp.message_handler(commands=['start', 'help'], commands_prefix=PREFIX)
 async def helpstr(message: types.Message):
