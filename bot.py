@@ -187,28 +187,28 @@ async def info(message: types.Message):
 
 
 
-@dp.message_handler(commands=['bin'])
+@dp.message_handler(commands=['bin'], commands_prefix=PREFIX)
 async def binio(message: types.Message):
     await message.answer_chat_action('typing')
     ID = message.from_user.id
     FIRST = message.from_user.first_name
     BIN = message.text[len('/bin '):]
-    
     if len(BIN) < 6:
-        return await message.reply('Por favor, envía un número BIN válido.')
-    
-    r = requests.get(f'https://bins.ws/search?bins={BIN[:6]}').text
+        return await message.reply(
+                   'Send bin not ass'
+        )
+    r = requests.get(
+               f'https://bins.ws/search?bins={BIN[:6]}'
+    ).text
     soup = bs(r, features='html.parser')
-    k = soup.find('div', {'class': 'data-block'}).get_text() if soup.find('div', {'class': 'data-block'}) else 'No se encontró información'
-    
-    info = f'''
-🔍 Información sobre el BIN: {BIN}
-{k[62:]}
-👤 REMITENTE: <a href="tg://user?id={ID}">{FIRST}</a>
-🤖 BOT⇢ @{Ntcheckccbot}
-👑 CREADOR⇢ <a href="tg://user?id={OWNER}">AQUÍ</a>
+    k = soup.find("div", {"class": "page"})
+    INFO = f'''
+{k.text[62:]}
+SENDER: <a href="tg://user?id={ID}">{FIRST}</a>
+BOT⇢ @{BOT_USERNAME}
+OWNER⇢ <a href="tg://user?id={OWNER}">LINK</a>
 '''
-    await message.reply(info, parse_mode=types.ParseMode.HTML)
+    await message.reply(INFO)
 
 
 
