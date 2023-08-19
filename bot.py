@@ -107,8 +107,25 @@ async def get_data_from_php():
 # Llamada a la función desde tu bot de Telegram (ejemplo)
 @dp.message_handler(commands=['get_data'])
 async def handle_get_data(message: types.Message):
+    await message.answer_chat_action('typing')
+    
     data = await get_data_from_php()
-    await message.reply(data)
+    
+    # Crear un mensaje con formato HTML para mostrar los datos
+    formatted_data = f'''
+📊 <b><u>Datos Obtenidos</u></b> 📊
+
+👤 <b>Nombre:</b> {data['first']} {data['last']}
+🏠 <b>Dirección:</b> {data['street']}
+🌆 <b>Ciudad:</b> {data['city']}
+🏞️ <b>Estado:</b> {data['state']}
+📮 <b>Código Postal:</b> {data['zip']}
+📞 <b>Teléfono:</b> {data['phone']}
+'''
+    
+    # Enviar el mensaje con el formato HTML
+    await message.reply(formatted_data, parse_mode=types.ParseMode.HTML)
+
 
 @dp.message_handler(commands=['start', 'help'], commands_prefix=PREFIX)
 async def helpstr(message: types.Message):
