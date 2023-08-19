@@ -91,7 +91,7 @@ async def is_owner(user_id):
     return user_id == OWNER
 
 #URL de tu código PHP alojado en Heroku o en otro servidor
-php_url = 'https://nombre-de-tu-app-heroku.herokuapp.com'
+php_url = 'https://randomaddress-9d94ddea293c.herokuapp.com/'
 
 # Función para llamar al código PHP y obtener los resultados
 async def get_data_from_php():
